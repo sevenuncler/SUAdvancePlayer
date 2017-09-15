@@ -7,8 +7,11 @@
 //
 
 #import "ViewController.h"
+#import "SUAdvancePlayer.h"
 
 @interface ViewController ()
+
+@property (nonatomic, strong) SUAdvancePlayer *player;
 
 @end
 
@@ -16,7 +19,12 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    // Do any additional setup after loading the view, typically from a nib.
+    self.view.backgroundColor = [UIColor redColor];
+
+    self.player = [[SUAdvancePlayer alloc] initPlayerWithURL:[NSURL URLWithString:@"http://vodg3ns8cfm.vod.126.net/vodg3ns8cfm/0S0r2IXc_75031_shd.mp4"]];
+    self.player.playerLayer.frame = self.view.bounds;
+    [self.view.layer addSublayer:self.player.playerLayer];
+    [self.player play];
 }
 
 

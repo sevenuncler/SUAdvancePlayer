@@ -7,10 +7,14 @@
 //
 
 #import "SUURLAssetSourceLoader.h"
+#import "SUDownloadTask.h"
+#import <MobileCoreServices/MobileCoreServices.h>
 
 @interface SUURLAssetSourceLoader()
 
 @property (nonatomic, strong) NSMutableArray    *pendingRequests;
+@property (nonatomic, strong) SUDownloadTask    *downloadTask;
+
 
 @end
 
@@ -22,19 +26,92 @@
 
 - (void)addLoadingRequest:(AVAssetResourceLoadingRequest *)loadingRequest {
     [self.pendingRequests addObject:loadingRequest];
+    NSLog(@"%12lld-%12lld-%12ld >>>>>", loadingRequest.dataRequest.currentOffset, loadingRequest.dataRequest.requestedOffset, loadingRequest.dataRequest.requestedLength);
+
+    [self doDownloadSource:loadingRequest.request.URL];
 }
 
-- (void)doDownloadSource {
-    
+- (void)doDownloadSource:(NSURL *)url {
+    if(!self.downloadTask) {
+        self.downloadTask = [SUDownloadTask new];
+        [self.downloadTask startDownloadWithURL:url];
+        
+        __weak typeof(self) weakSelf = self;
+        self.downloadTask.freshDataCachedHandler = ^() {
+            [weakSelf dealWithLoadingRequests];
+        };
+    }
 }
 
 - (void)dealWithLoadingRequests {
+    NSMutableArray *requestsCompleted = [NSMutableArray array];  //请求完成的数组
+    //每次下载一块数据都是一次请求，把这些请求放到数组，遍历数组
+    for (AVAssetResourceLoadingRequest *loadingRequest in self.pendingRequests)
+    {
+        [self fillInContentInformation:loadingRequest.contentInformationRequest]; //对每次请求加上长度，文件类型等信息
+        
+        BOOL didRespondCompletely = [self fillResponseDataForLoadingRequest:loadingRequest]; //判断此次请求的数据是否处理完全
+        
+        if (didRespondCompletely) {
+            
+            [requestsCompleted addObject:loadingRequest];  //如果完整，把此次请求放进 请求完成的数组
+            [loadingRequest finishLoading];
+            
+        }
+    }
     
+    [self.pendingRequests removeObjectsInArray:requestsCompleted];   //在所有请求的数组中移除已经完成的
 }
 
-- (void)fillResponseDataForLoadingRequest {
-    
+- (void)fillInContentInformation:(AVAssetResourceLoadingContentInformationRequest *)contentInformationRequest
+{
+    NSString *mimeType = @"video/mp4";
+    CFStringRef contentType = UTTypeCreatePreferredIdentifierForTag(kUTTagClassMIMEType, (__bridge CFStringRef)(mimeType), NULL);
+    contentInformationRequest.byteRangeAccessSupported = YES;
+    contentInformationRequest.contentType = CFBridgingRelease(contentType);
+    contentInformationRequest.contentLength = self.downloadTask.resourceLength;
 }
+
+- (BOOL)fillResponseDataForLoadingRequest:(AVAssetResourceLoadingRequest *)loadingRequest {
+    AVAssetResourceLoadingDataRequest *dataRequest = loadingRequest.dataRequest;
+    
+    long long startOffset = dataRequest.requestedOffset;
+    
+    if (dataRequest.currentOffset != 0) {
+        startOffset = dataRequest.currentOffset;
+    }
+    
+    if ((self.downloadTask.requestOffset + self.downloadTask.resourceLength) < startOffset)
+    {
+        //NSLog(@"NO DATA FOR REQUEST");
+        return NO;
+    }
+    
+    if (startOffset < self.downloadTask.requestOffset) {
+        return NO;
+    }
+    
+    
+    // This is the total data we have from startOffset to whatever has been downloaded so far
+    NSUInteger unreadBytes = self.downloadTask.resourceCachedLength - ((NSInteger)startOffset - self.downloadTask.requestOffset);
+    
+    // Respond with whatever is available if we can't satisfy the request fully yet
+    NSUInteger numberOfBytesToRespondWith = MIN((NSUInteger)dataRequest.requestedLength, unreadBytes);
+    
+    NSData *data = [self.downloadTask readDataInRange:NSMakeRange((NSUInteger)startOffset- self.downloadTask.requestOffset, (NSUInteger)numberOfBytesToRespondWith)];
+    [dataRequest respondWithData:data];
+    
+    
+    
+    long long endOffset = startOffset + dataRequest.requestedLength;
+    BOOL didRespondFully = (self.downloadTask.requestOffset + self.downloadTask.resourceCachedLength) >= endOffset;
+    if(didRespondFully) {
+        NSLog(@"%12lld-%12lld-%12ld", startOffset, dataRequest.requestedOffset, dataRequest.requestedLength);
+        NSLog(@"%12lld-%12lld-%12ld", dataRequest.currentOffset, dataRequest.requestedOffset, dataRequest.requestedLength);
+    }
+    return didRespondFully;
+}
+
 
 
 #pragma mark - AVAssetResourceLoaderDelegate
@@ -46,6 +123,15 @@
 
 - (void)resourceLoader:(AVAssetResourceLoader *)resourceLoader didCancelLoadingRequest:(AVAssetResourceLoadingRequest *)loadingRequest {
     
+}
+
+#pragma mark - Getter & Setter
+
+- (NSMutableArray *)pendingRequests {
+    if(!_pendingRequests) {
+        _pendingRequests = [[NSMutableArray alloc] init];
+    }
+    return _pendingRequests;
 }
 
 @end

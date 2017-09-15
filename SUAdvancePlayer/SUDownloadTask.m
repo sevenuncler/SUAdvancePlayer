@@ -24,7 +24,8 @@
 }
 
 - (void)seekToDownloadAtOffset:(unsigned long long)offset withURL:(NSURL *)url {
-    self.requestOffset = offset;
+    self.requestOffset  = offset;
+    self.resourceLength = 0;
     NSURL *effectiveURL = [self originSchemeURL:url];
     
     NSMutableURLRequest *request;
@@ -34,8 +35,10 @@
     [self.dataTask resume];
 }
 
-- (NSData *)readDataInRange:(NSRange *)range {
-    return nil;
+- (NSData *)readDataInRange:(NSRange)range {
+    NSFileHandle *fileHandle = [NSFileHandle fileHandleForReadingAtPath:self.temporyFilePath];
+    [fileHandle seekToFileOffset:range.location];
+    return [fileHandle readDataOfLength:range.length];
 }
 
 #pragma mark - private

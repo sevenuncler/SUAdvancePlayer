@@ -23,7 +23,7 @@ typedef void (^FreshDataCachedHandler)();
 
 - (void)startDownloadWithURL:(NSURL *)url;
 - (void)seekToDownloadAtOffset:(unsigned long long)offset withURL:(NSURL *)url;
-- (NSData *)readDataInRange:(NSRange *)range;
+- (NSData *)readDataInRange:(NSRange)range;
 
 @end
 

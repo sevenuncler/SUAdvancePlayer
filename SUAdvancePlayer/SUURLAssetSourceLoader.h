@@ -11,4 +11,5 @@
 
 @interface SUURLAssetSourceLoader : NSObject<AVAssetResourceLoaderDelegate>
 
+
 @end

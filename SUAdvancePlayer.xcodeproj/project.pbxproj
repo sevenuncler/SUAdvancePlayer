@@ -43,12 +43,12 @@
 		4AE8F2291F6BCB940094BA4F /* SUAdvancePlayerTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SUAdvancePlayerTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		4AE8F22D1F6BCB940094BA4F /* SUAdvancePlayerTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SUAdvancePlayerTests.m; sourceTree = "<group>"; };
 		4AE8F22F1F6BCB940094BA4F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		4AE8F2381F6BCBB00094BA4F /* SUAdvancePlayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SUAdvancePlayer.h; sourceTree = "<group>"; };
-		4AE8F2391F6BCBB00094BA4F /* SUAdvancePlayer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SUAdvancePlayer.m; sourceTree = "<group>"; };
-		4AE8F23B1F6BCBDD0094BA4F /* SUURLAssetSourceLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SUURLAssetSourceLoader.h; sourceTree = "<group>"; };
-		4AE8F23C1F6BCBDD0094BA4F /* SUURLAssetSourceLoader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SUURLAssetSourceLoader.m; sourceTree = "<group>"; };
-		4AE8F23E1F6BD0590094BA4F /* SUDownloadTask.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SUDownloadTask.h; sourceTree = "<group>"; };
-		4AE8F23F1F6BD0590094BA4F /* SUDownloadTask.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SUDownloadTask.m; sourceTree = "<group>"; };
+		4AE8F2381F6BCBB00094BA4F /* SUAdvancePlayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SUAdvancePlayer.h; path = ../SUAdvancePlayer.h; sourceTree = "<group>"; };
+		4AE8F2391F6BCBB00094BA4F /* SUAdvancePlayer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SUAdvancePlayer.m; path = ../SUAdvancePlayer.m; sourceTree = "<group>"; };
+		4AE8F23B1F6BCBDD0094BA4F /* SUURLAssetSourceLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SUURLAssetSourceLoader.h; path = ../SUURLAssetSourceLoader.h; sourceTree = "<group>"; };
+		4AE8F23C1F6BCBDD0094BA4F /* SUURLAssetSourceLoader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SUURLAssetSourceLoader.m; path = ../SUURLAssetSourceLoader.m; sourceTree = "<group>"; };
+		4AE8F23E1F6BD0590094BA4F /* SUDownloadTask.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SUDownloadTask.h; path = ../SUDownloadTask.h; sourceTree = "<group>"; };
+		4AE8F23F1F6BD0590094BA4F /* SUDownloadTask.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SUDownloadTask.m; path = ../SUDownloadTask.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -90,6 +90,7 @@
 		4AE8F2121F6BCB940094BA4F /* SUAdvancePlayer */ = {
 			isa = PBXGroup;
 			children = (
+				87416C3F1F6BFDE900535052 /* Player */,
 				4AE8F2161F6BCB940094BA4F /* AppDelegate.h */,
 				4AE8F2171F6BCB940094BA4F /* AppDelegate.m */,
 				4AE8F2191F6BCB940094BA4F /* ViewController.h */,
@@ -99,12 +100,6 @@
 				4AE8F2211F6BCB940094BA4F /* LaunchScreen.storyboard */,
 				4AE8F2241F6BCB940094BA4F /* Info.plist */,
 				4AE8F2131F6BCB940094BA4F /* Supporting Files */,
-				4AE8F2381F6BCBB00094BA4F /* SUAdvancePlayer.h */,
-				4AE8F2391F6BCBB00094BA4F /* SUAdvancePlayer.m */,
-				4AE8F23B1F6BCBDD0094BA4F /* SUURLAssetSourceLoader.h */,
-				4AE8F23C1F6BCBDD0094BA4F /* SUURLAssetSourceLoader.m */,
-				4AE8F23E1F6BD0590094BA4F /* SUDownloadTask.h */,
-				4AE8F23F1F6BD0590094BA4F /* SUDownloadTask.m */,
 			);
 			path = SUAdvancePlayer;
 			sourceTree = "<group>";
@@ -124,6 +119,19 @@
 				4AE8F22F1F6BCB940094BA4F /* Info.plist */,
 			);
 			path = SUAdvancePlayerTests;
+			sourceTree = "<group>";
+		};
+		87416C3F1F6BFDE900535052 /* Player */ = {
+			isa = PBXGroup;
+			children = (
+				4AE8F2381F6BCBB00094BA4F /* SUAdvancePlayer.h */,
+				4AE8F2391F6BCBB00094BA4F /* SUAdvancePlayer.m */,
+				4AE8F23B1F6BCBDD0094BA4F /* SUURLAssetSourceLoader.h */,
+				4AE8F23C1F6BCBDD0094BA4F /* SUURLAssetSourceLoader.m */,
+				4AE8F23E1F6BD0590094BA4F /* SUDownloadTask.h */,
+				4AE8F23F1F6BD0590094BA4F /* SUDownloadTask.m */,
+			);
+			path = Player;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -436,6 +444,7 @@
 				4AE8F2341F6BCB940094BA4F /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		4AE8F2351F6BCB940094BA4F /* Build configuration list for PBXNativeTarget "SUAdvancePlayerTests" */ = {
 			isa = XCConfigurationList;
@@ -444,6 +453,7 @@
 				4AE8F2371F6BCB940094BA4F /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
