@@ -14,9 +14,9 @@
 		4AE8F2201F6BCB940094BA4F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4AE8F21F1F6BCB940094BA4F /* Assets.xcassets */; };
 		4AE8F2231F6BCB940094BA4F /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4AE8F2211F6BCB940094BA4F /* LaunchScreen.storyboard */; };
 		4AE8F22E1F6BCB940094BA4F /* SUAdvancePlayerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 4AE8F22D1F6BCB940094BA4F /* SUAdvancePlayerTests.m */; };
-		4AE8F23A1F6BCBB00094BA4F /* SUAdvancePlayer.m in Sources */ = {isa = PBXBuildFile; fileRef = 4AE8F2391F6BCBB00094BA4F /* SUAdvancePlayer.m */; };
-		4AE8F23D1F6BCBDD0094BA4F /* SUURLAssetSourceLoader.m in Sources */ = {isa = PBXBuildFile; fileRef = 4AE8F23C1F6BCBDD0094BA4F /* SUURLAssetSourceLoader.m */; };
-		4AE8F2401F6BD0590094BA4F /* SUDownloadTask.m in Sources */ = {isa = PBXBuildFile; fileRef = 4AE8F23F1F6BD0590094BA4F /* SUDownloadTask.m */; };
+		87416C471F6EBB8F00535052 /* SUAdvancePlayer.m in Sources */ = {isa = PBXBuildFile; fileRef = 87416C421F6EBB8F00535052 /* SUAdvancePlayer.m */; };
+		87416C481F6EBB8F00535052 /* SUDownloadTask.m in Sources */ = {isa = PBXBuildFile; fileRef = 87416C441F6EBB8F00535052 /* SUDownloadTask.m */; };
+		87416C491F6EBB8F00535052 /* SUURLAssetSourceLoader.m in Sources */ = {isa = PBXBuildFile; fileRef = 87416C461F6EBB8F00535052 /* SUURLAssetSourceLoader.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -43,12 +43,12 @@
 		4AE8F2291F6BCB940094BA4F /* SUAdvancePlayerTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SUAdvancePlayerTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		4AE8F22D1F6BCB940094BA4F /* SUAdvancePlayerTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SUAdvancePlayerTests.m; sourceTree = "<group>"; };
 		4AE8F22F1F6BCB940094BA4F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		4AE8F2381F6BCBB00094BA4F /* SUAdvancePlayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SUAdvancePlayer.h; path = ../SUAdvancePlayer.h; sourceTree = "<group>"; };
-		4AE8F2391F6BCBB00094BA4F /* SUAdvancePlayer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SUAdvancePlayer.m; path = ../SUAdvancePlayer.m; sourceTree = "<group>"; };
-		4AE8F23B1F6BCBDD0094BA4F /* SUURLAssetSourceLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SUURLAssetSourceLoader.h; path = ../SUURLAssetSourceLoader.h; sourceTree = "<group>"; };
-		4AE8F23C1F6BCBDD0094BA4F /* SUURLAssetSourceLoader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SUURLAssetSourceLoader.m; path = ../SUURLAssetSourceLoader.m; sourceTree = "<group>"; };
-		4AE8F23E1F6BD0590094BA4F /* SUDownloadTask.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SUDownloadTask.h; path = ../SUDownloadTask.h; sourceTree = "<group>"; };
-		4AE8F23F1F6BD0590094BA4F /* SUDownloadTask.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SUDownloadTask.m; path = ../SUDownloadTask.m; sourceTree = "<group>"; };
+		87416C411F6EBB8F00535052 /* SUAdvancePlayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SUAdvancePlayer.h; sourceTree = "<group>"; };
+		87416C421F6EBB8F00535052 /* SUAdvancePlayer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SUAdvancePlayer.m; sourceTree = "<group>"; };
+		87416C431F6EBB8F00535052 /* SUDownloadTask.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SUDownloadTask.h; sourceTree = "<group>"; };
+		87416C441F6EBB8F00535052 /* SUDownloadTask.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SUDownloadTask.m; sourceTree = "<group>"; };
+		87416C451F6EBB8F00535052 /* SUURLAssetSourceLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SUURLAssetSourceLoader.h; sourceTree = "<group>"; };
+		87416C461F6EBB8F00535052 /* SUURLAssetSourceLoader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SUURLAssetSourceLoader.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -90,7 +90,7 @@
 		4AE8F2121F6BCB940094BA4F /* SUAdvancePlayer */ = {
 			isa = PBXGroup;
 			children = (
-				87416C3F1F6BFDE900535052 /* Player */,
+				87416C401F6EBB8F00535052 /* Player */,
 				4AE8F2161F6BCB940094BA4F /* AppDelegate.h */,
 				4AE8F2171F6BCB940094BA4F /* AppDelegate.m */,
 				4AE8F2191F6BCB940094BA4F /* ViewController.h */,
@@ -121,15 +121,15 @@
 			path = SUAdvancePlayerTests;
 			sourceTree = "<group>";
 		};
-		87416C3F1F6BFDE900535052 /* Player */ = {
+		87416C401F6EBB8F00535052 /* Player */ = {
 			isa = PBXGroup;
 			children = (
-				4AE8F2381F6BCBB00094BA4F /* SUAdvancePlayer.h */,
-				4AE8F2391F6BCBB00094BA4F /* SUAdvancePlayer.m */,
-				4AE8F23B1F6BCBDD0094BA4F /* SUURLAssetSourceLoader.h */,
-				4AE8F23C1F6BCBDD0094BA4F /* SUURLAssetSourceLoader.m */,
-				4AE8F23E1F6BD0590094BA4F /* SUDownloadTask.h */,
-				4AE8F23F1F6BD0590094BA4F /* SUDownloadTask.m */,
+				87416C411F6EBB8F00535052 /* SUAdvancePlayer.h */,
+				87416C421F6EBB8F00535052 /* SUAdvancePlayer.m */,
+				87416C431F6EBB8F00535052 /* SUDownloadTask.h */,
+				87416C441F6EBB8F00535052 /* SUDownloadTask.m */,
+				87416C451F6EBB8F00535052 /* SUURLAssetSourceLoader.h */,
+				87416C461F6EBB8F00535052 /* SUURLAssetSourceLoader.m */,
 			);
 			path = Player;
 			sourceTree = "<group>";
@@ -238,12 +238,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				87416C481F6EBB8F00535052 /* SUDownloadTask.m in Sources */,
 				4AE8F21B1F6BCB940094BA4F /* ViewController.m in Sources */,
+				87416C491F6EBB8F00535052 /* SUURLAssetSourceLoader.m in Sources */,
 				4AE8F2181F6BCB940094BA4F /* AppDelegate.m in Sources */,
 				4AE8F2151F6BCB940094BA4F /* main.m in Sources */,
-				4AE8F23D1F6BCBDD0094BA4F /* SUURLAssetSourceLoader.m in Sources */,
-				4AE8F2401F6BD0590094BA4F /* SUDownloadTask.m in Sources */,
-				4AE8F23A1F6BCBB00094BA4F /* SUAdvancePlayer.m in Sources */,
+				87416C471F6EBB8F00535052 /* SUAdvancePlayer.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
