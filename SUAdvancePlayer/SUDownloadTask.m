@@ -20,20 +20,31 @@
 #pragma mark - public
 
 - (void)startDownloadWithURL:(NSURL *)url {
+    self.resourceLength = 0;
+    self.requestOffset  = 0;
+    self.resourceCachedLength = 0;
     [self seekToDownloadAtOffset:0 withURL:url];
 }
 
 - (void)seekToDownloadAtOffset:(unsigned long long)offset withURL:(NSURL *)url {
+    
     self.requestOffset  = offset;
-    self.resourceLength = 0;
     NSURL *effectiveURL = [self originSchemeURL:url];
+    self.resourceCachedLength = 0;
+    __weak typeof(self) weakSelf = self;
+    [self.dataTask cancel]; //
     
-    NSMutableURLRequest *request;
-    request = [NSMutableURLRequest requestWithURL:effectiveURL];
-    
-    self.dataTask = [self.session dataTaskWithRequest:request];
-    [self.dataTask resume];
+        NSMutableURLRequest *request;
+        request = [NSMutableURLRequest requestWithURL:effectiveURL];
+        if (self.requestOffset > 0 && self.resourceLength > 0) {
+            [request addValue:[NSString stringWithFormat:@"bytes=%ld-%ld",(unsigned long)offset, (unsigned long)self.resourceLength - 1] forHTTPHeaderField:@"Range"];
+        }
+        self.dataTask = [self.session dataTaskWithRequest:request];
+        [self.dataTask resume];
+
+
 }
+
 
 - (NSData *)readDataInRange:(NSRange)range {
     NSFileHandle *fileHandle = [NSFileHandle fileHandleForReadingAtPath:self.temporyFilePath];
@@ -56,7 +67,7 @@
 - (void)URLSession:(NSURLSession *)session dataTask:(NSURLSessionDataTask *)dataTask
 didReceiveResponse:(NSURLResponse *)response
  completionHandler:(void (^)(NSURLSessionResponseDisposition disposition))completionHandler {
-#warning 允许继续完成加载？
+#warning 允许继续完成加载？611778560 - 702386623
     completionHandler(NSURLSessionResponseAllow);
     
     //获取该资源的基本信息，资源文件长度、类型
@@ -72,7 +83,7 @@ didReceiveResponse:(NSURLResponse *)response
     }else {
         self.resourceLength = [length integerValue];
     }
-    
+    NSLog(@"返回信息>>>> content:%@ 请求:%lld 长度%lld",content, self.requestOffset, self.resourceLength);
     //资源类型
 #warning 需要的时候添加
     
@@ -86,7 +97,6 @@ didReceiveResponse:(NSURLResponse *)response
     [fileHandle seekToEndOfFile];
     [fileHandle writeData:data];
     self.resourceCachedLength += data.length;
-    
     //通知数据更新
     if(self.freshDataCachedHandler) {
         self.freshDataCachedHandler();

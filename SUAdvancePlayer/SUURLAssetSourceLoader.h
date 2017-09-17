@@ -11,5 +11,6 @@
 
 @interface SUURLAssetSourceLoader : NSObject<AVAssetResourceLoaderDelegate>
 
+@property (nonatomic, assign, getter=isSeeked) BOOL seeked;
 
 @end

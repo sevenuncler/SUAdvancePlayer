@@ -33,7 +33,11 @@
 }
 
 - (void)seekToOffset:(NSUInteger )offset {
-    
+    [self.player pause];
+    [self.player seekToTime:CMTimeMake(offset, 1) completionHandler:^(BOOL finished) {
+        [self.player play];
+    }];
+    self.sourceLoader.seeked = YES;
 }
 
 - (void)play {

@@ -25,6 +25,30 @@
     self.player.playerLayer.frame = self.view.bounds;
     [self.view.layer addSublayer:self.player.playerLayer];
     [self.player play];
+    
+    __weak typeof(self) weakSelf = self;
+    
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(10 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        [weakSelf.player seekToOffset:60 * 40];
+    });
+    
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(15 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        [weakSelf.player seekToOffset:60*50];
+    });
+
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(20 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        [weakSelf.player seekToOffset:60 * 20];
+    });
+    
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(25 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        [weakSelf.player seekToOffset:60 * 40];
+    });
+
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(30 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        [weakSelf.player seekToOffset:60 * 35];
+    });
+    
+    
 }
 
 

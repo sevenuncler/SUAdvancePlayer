@@ -20,26 +20,46 @@
 
 @implementation SUURLAssetSourceLoader
 
-
+- (instancetype)init {
+    if(self = [super init]) {
+        self.seeked = NO;
+    }
+    return self;
+}
 
 #pragma mark - 内部处理函数
 
 - (void)addLoadingRequest:(AVAssetResourceLoadingRequest *)loadingRequest {
     [self.pendingRequests addObject:loadingRequest];
     NSLog(@"%12lld-%12lld-%12ld >>>>>", loadingRequest.dataRequest.currentOffset, loadingRequest.dataRequest.requestedOffset, loadingRequest.dataRequest.requestedLength);
-
-    [self doDownloadSource:loadingRequest.request.URL];
+    
+    [self doDownloadSource:loadingRequest];
 }
 
-- (void)doDownloadSource:(NSURL *)url {
+- (void)doDownloadSource:(AVAssetResourceLoadingRequest *)loadingRequest {
+    NSURL *URL = loadingRequest.request.URL;
+    NSUInteger requestOffset = loadingRequest.dataRequest.requestedOffset;
+    __weak typeof(self) weakSelf = self;
     if(!self.downloadTask) {
         self.downloadTask = [SUDownloadTask new];
-        [self.downloadTask startDownloadWithURL:url];
-        
-        __weak typeof(self) weakSelf = self;
         self.downloadTask.freshDataCachedHandler = ^() {
             [weakSelf dealWithLoadingRequests];
         };
+        [self.downloadTask startDownloadWithURL:URL];
+    }else if(requestOffset>0 && self.isSeeked){
+        NSLog(@"%12lld-%12lld-%12ld >>>>> Seeked <<<<<", loadingRequest.dataRequest.currentOffset, loadingRequest.dataRequest.requestedOffset, loadingRequest.dataRequest.requestedLength);
+        NSMutableArray *finishArray = [NSMutableArray array];
+        [self.pendingRequests enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+            if(idx == weakSelf.pendingRequests.count - 1) {
+                return;
+            }
+            AVAssetResourceLoadingRequest *loadingRequest = (AVAssetResourceLoadingRequest *)obj;
+            [loadingRequest finishLoading];
+            [finishArray addObject:loadingRequest];
+        }];
+        [self.pendingRequests removeObjectsInArray:finishArray];
+        [self.downloadTask seekToDownloadAtOffset:requestOffset withURL:URL];
+        self.seeked = NO;
     }
 }
 
@@ -98,7 +118,7 @@
     // Respond with whatever is available if we can't satisfy the request fully yet
     NSUInteger numberOfBytesToRespondWith = MIN((NSUInteger)dataRequest.requestedLength, unreadBytes);
     
-    NSData *data = [self.downloadTask readDataInRange:NSMakeRange((NSUInteger)startOffset- self.downloadTask.requestOffset, (NSUInteger)numberOfBytesToRespondWith)];
+    NSData *data = [self.downloadTask readDataInRange:NSMakeRange((NSUInteger)startOffset - self.downloadTask.requestOffset, (NSUInteger)numberOfBytesToRespondWith)];
     [dataRequest respondWithData:data];
     
     
@@ -106,8 +126,8 @@
     long long endOffset = startOffset + dataRequest.requestedLength;
     BOOL didRespondFully = (self.downloadTask.requestOffset + self.downloadTask.resourceCachedLength) >= endOffset;
     if(didRespondFully) {
-        NSLog(@"%12lld-%12lld-%12ld", startOffset, dataRequest.requestedOffset, dataRequest.requestedLength);
-        NSLog(@"%12lld-%12lld-%12ld", dataRequest.currentOffset, dataRequest.requestedOffset, dataRequest.requestedLength);
+        NSLog(@"%12lld-%12lld-%12ld >>>>> 完成1", startOffset, dataRequest.requestedOffset, dataRequest.requestedLength);
+        NSLog(@"%12lld-%12lld-%12ld >>>>> 完成2", dataRequest.currentOffset, dataRequest.requestedOffset, dataRequest.requestedLength);
     }
     return didRespondFully;
 }
