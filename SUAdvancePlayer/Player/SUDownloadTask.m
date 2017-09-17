@@ -31,18 +31,15 @@
     self.requestOffset  = offset;
     NSURL *effectiveURL = [self originSchemeURL:url];
     self.resourceCachedLength = 0;
-    __weak typeof(self) weakSelf = self;
-    [self.dataTask cancel]; //
+    [self.dataTask cancel]; //很重要，否则数据会乱
     
-        NSMutableURLRequest *request;
-        request = [NSMutableURLRequest requestWithURL:effectiveURL];
-        if (self.requestOffset > 0 && self.resourceLength > 0) {
-            [request addValue:[NSString stringWithFormat:@"bytes=%ld-%ld",(unsigned long)offset, (unsigned long)self.resourceLength - 1] forHTTPHeaderField:@"Range"];
-        }
-        self.dataTask = [self.session dataTaskWithRequest:request];
-        [self.dataTask resume];
-
-
+    NSMutableURLRequest *request;
+    request = [NSMutableURLRequest requestWithURL:effectiveURL];
+    if (self.requestOffset > 0 && self.resourceLength > 0) {
+        [request addValue:[NSString stringWithFormat:@"bytes=%ld-%ld",(unsigned long)offset, (unsigned long)self.resourceLength - 1] forHTTPHeaderField:@"Range"];
+    }
+    self.dataTask = [self.session dataTaskWithRequest:request];
+    [self.dataTask resume];
 }
 
 
