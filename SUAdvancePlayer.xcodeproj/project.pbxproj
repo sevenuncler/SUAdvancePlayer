@@ -30,6 +30,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		4AACD3281F6FCC6D00BFA473 /* SURange.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SURange.h; sourceTree = "<group>"; };
 		4AE8F2101F6BCB940094BA4F /* SUAdvancePlayer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SUAdvancePlayer.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		4AE8F2141F6BCB940094BA4F /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		4AE8F2161F6BCB940094BA4F /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -124,6 +125,7 @@
 		87416C401F6EBB8F00535052 /* Player */ = {
 			isa = PBXGroup;
 			children = (
+				4AACD3281F6FCC6D00BFA473 /* SURange.h */,
 				87416C411F6EBB8F00535052 /* SUAdvancePlayer.h */,
 				87416C421F6EBB8F00535052 /* SUAdvancePlayer.m */,
 				87416C431F6EBB8F00535052 /* SUDownloadTask.h */,
