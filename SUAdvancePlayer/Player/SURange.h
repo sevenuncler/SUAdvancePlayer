@@ -116,7 +116,9 @@ SURangePointer  SUInsertNodeIntoRange(SURange  *src, SURange *node){
     struct _SURange * head          = NULL;
     struct _SURange * tail          = NULL;
     struct _SURange * targetHead    = NULL;
-    
+    if(src == NULL || node == NULL || node->length <= 0 || src->length <= 0) {
+        return src;
+    }
     targetHead = src;
     //
     for(head = src; head; head = head->next) {
@@ -171,10 +173,11 @@ void swapSmallLocation2Left(SURangePointer node1, SURangePointer node2);
 SURangePointer mergeNode(SURangePointer node1, SURangePointer node2) {
     SURangePointer range;
     SURangePointer head;
-    swapSmallLocation2Left(node1, node2);
     if(NULL == node2 || NULL == node1) {
         return node1;
     }
+    swapSmallLocation2Left(node1, node2);
+    
     if(node1->location >0 && (node2->location + node2->length-1) < node1->location - 1) {
         node2->next = node1;
         head = node2;
