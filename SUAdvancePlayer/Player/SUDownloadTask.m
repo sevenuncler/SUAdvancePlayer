@@ -52,7 +52,6 @@
 #pragma mark - private
 
 - (NSURL *)originSchemeURL:(NSURL *)url {
-#warning 最后一个参数啥意思？
     NSURLComponents *components = [[NSURLComponents alloc] initWithURL:url resolvingAgainstBaseURL:NO];
     components.scheme = @"http";
     return components.URL;
@@ -64,7 +63,6 @@
 - (void)URLSession:(NSURLSession *)session dataTask:(NSURLSessionDataTask *)dataTask
 didReceiveResponse:(NSURLResponse *)response
  completionHandler:(void (^)(NSURLSessionResponseDisposition disposition))completionHandler {
-#warning 允许继续完成加载？611778560 - 702386623
     completionHandler(NSURLSessionResponseAllow);
     
     //获取该资源的基本信息，资源文件长度、类型
@@ -82,7 +80,6 @@ didReceiveResponse:(NSURLResponse *)response
     }
     NSLog(@"返回信息>>>> content:%@ 请求:%lld 长度%lld",content, self.requestOffset, self.resourceLength);
     //资源类型
-#warning 需要的时候添加
     
     //重新创建临时文件
     [self recreateTempFile:self.temporyFilePath];
