@@ -7,11 +7,16 @@
 //
 
 #import "SUDownloadTask.h"
+#import "SURange.h"
 
 @interface SUDownloadTask()<NSURLSessionDataDelegate>
-
+{
+    SURange *_downloadRange;
+}
 @property (nonatomic, strong) NSURLSession          *session;
 @property (nonatomic, strong) NSURLSessionDataTask  *dataTask;
+@property (nonatomic, assign) SURange               currentRange;
+@property (nonatomic, strong) NSMutableDictionary   *rangeDict;
 
 @end
 
@@ -23,6 +28,7 @@
     self.resourceLength = 0;
     self.requestOffset  = 0;
     self.resourceCachedLength = 0;
+    self.rangeDict = [NSMutableDictionary dictionary];
     [self seekToDownloadAtOffset:0 withURL:url];
 }
 
@@ -35,9 +41,12 @@
     
     NSMutableURLRequest *request;
     request = [NSMutableURLRequest requestWithURL:effectiveURL];
-    if (self.requestOffset > 0 && self.resourceLength > 0) {
+    if (self.resourceLength > 0) {
         [request addValue:[NSString stringWithFormat:@"bytes=%ld-%ld",(unsigned long)offset, (unsigned long)self.resourceLength - 1] forHTTPHeaderField:@"Range"];
     }
+    _currentRange.location = self.requestOffset;
+    _currentRange.length   = 0;
+    
     self.dataTask = [self.session dataTaskWithRequest:request];
     [self.dataTask resume];
 }
@@ -64,7 +73,7 @@
 - (void)URLSession:(NSURLSession *)session dataTask:(NSURLSessionDataTask *)dataTask
 didReceiveResponse:(NSURLResponse *)response
  completionHandler:(void (^)(NSURLSessionResponseDisposition disposition))completionHandler {
-#warning 允许继续完成加载？611778560 - 702386623
+#warning 允许继续完成加载?
     completionHandler(NSURLSessionResponseAllow);
     
     //获取该资源的基本信息，资源文件长度、类型
@@ -86,18 +95,37 @@ didReceiveResponse:(NSURLResponse *)response
     
     //重新创建临时文件
     [self recreateTempFile:self.temporyFilePath];
+
 }
 
 - (void)URLSession:(NSURLSession *)session dataTask:(NSURLSessionDataTask *)dataTask
     didReceiveData:(NSData *)data {
+    
     NSFileHandle *fileHandle = [NSFileHandle fileHandleForWritingAtPath:self.temporyFilePath];
     [fileHandle seekToEndOfFile];
     [fileHandle writeData:data];
     self.resourceCachedLength += data.length;
+    
+    //
+    _currentRange.length += data.length;
+    SURange *range;
+    range = malloc(sizeof(SURange));
+    range->location = _currentRange.location;
+    range->length   = _currentRange.length;
+    range->next     = NULL;
+    _downloadRange = SUInsertNodeIntoRange(_downloadRange, range);
+    free(range);
+    
+    SURangePrint(_downloadRange);
     //通知数据更新
     if(self.freshDataCachedHandler) {
         self.freshDataCachedHandler();
     }
+}
+
+- (void)URLSession:(NSURLSession *)session task:(NSURLSessionTask *)task
+didCompleteWithError:(nullable NSError *)error {
+    NSLog(@">>> <<< %@", task.response);
 }
 
 #pragma mark - Getter & Setter
@@ -133,5 +161,6 @@ didReceiveResponse:(NSURLResponse *)response
     }
     return _dataTask;
 }
+
 
 @end
