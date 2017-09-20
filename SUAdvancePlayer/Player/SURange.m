@@ -75,7 +75,8 @@ SURangePointer  SUInsertNodeIntoRange(SURange  *src, SURange *node1){
     return targetHead;
 }
 
-SURangePointer getGapRanges(SURangePointer links, SURangePointer node) {
+
+SURangePointer SUGetGapRanges(SURangePointer links, SURangePointer node) {
     SURangePointer  head    = NULL;
     SURangePointer  tail    = NULL;
     SURangePointer  preTail = NULL;
@@ -86,14 +87,20 @@ SURangePointer getGapRanges(SURangePointer links, SURangePointer node) {
     
     head = links;
     while(NULL != head) {
-        unsigned long long start = head->location;
-        unsigned long long end   = head->location + head->length - 1;
-        if((start <= nodeStart && end >= nodeStart && end <= nodeEnd)
-           || (start >= nodeStart && end <= nodeEnd)
-           || (nodeStart <= start && start <= nodeEnd && nodeEnd <= end)) {
-            break;
+        switch (SURangePositionInSource(node, head)) {
+            case 5:
+                return node;
+            case 4:
+                return  NULL;
+            case 3:
+            case 2:
+            case 1:
+                break;
+            default:
+                head = head->next;
+                continue;
         }
-        head = head->next;
+        break;
     }
     
     if(NULL != head) {
@@ -124,22 +131,19 @@ SURangePointer getGapRanges(SURangePointer links, SURangePointer node) {
     SURangePointer resultHead      = NULL;
     SURangePointer currentPointer  = NULL;
     tmp = NULL;
-    switch (isTargetCrossInSrc(node, head)) {
+
+    switch (SURangePositionInSource(node, head)) {
         case 1:
             break;
         case 2:
-            tmp = (SURangePointer)malloc(sizeof(SURange));
-            tmp->location = nodeStart;
-            tmp->length   = head->location - nodeStart;
-            tmp->next     = NULL;
-            resultHead = tmp;
-            break;
         case 3:
             tmp = (SURangePointer)malloc(sizeof(SURange));
             tmp->location = nodeStart;
             tmp->length   = head->location - nodeStart;
             tmp->next     = NULL;
             resultHead = tmp;
+            break;
+        case 4:
             break;
         default:
             break;
@@ -160,7 +164,8 @@ SURangePointer getGapRanges(SURangePointer links, SURangePointer node) {
         head = head->next;
     }
     
-    switch (isTargetCrossInSrc(node, tail)) {
+
+    switch (SURangePositionInSource(node, tail)) {
         case 1:
         case 2:
             currentPointer = (SURangePointer)malloc(sizeof(SURange));
@@ -192,14 +197,43 @@ int isTargetCrossInSrc(SURangePointer src, SURangePointer target) {
     
     unsigned long long start = target->location;
     unsigned long long end   = target->location + target->length - 1;
-    if(start <= nodeStart && end >= nodeStart && end <= nodeEnd) {
+    if(start <= nodeStart && nodeStart <= end && end < nodeEnd) {
         return 1;
     }else if(start > nodeStart && end < nodeEnd) {
         return 2;
-    }else if(nodeStart <= start && start <= nodeEnd && nodeEnd <= end) {
+    }else if(nodeStart < start && start <= nodeEnd && nodeEnd <= end) {
         return 3;
+    }else if(start <= nodeStart && end <= nodeEnd) {
+        return 4;
     }
     return 0;
+}
+
+//判断target是否和src有交叉
+int SURangePositionInSource(SURangePointer src, SURangePointer target) {
+    if(NULL == src || target == NULL) { //无法判断
+        return -2;
+    }
+    unsigned long long srcS = src->location;
+    unsigned long long srcE   = src->location + src->length - 1;
+    
+    unsigned long long targetS = target->location;
+    unsigned long long targetE   = target->location + target->length - 1;
+    
+    if(targetE < srcS) { //在左边, 无交集
+        return 0;
+    }else if(targetS <= srcS && srcS <= targetE && targetE < srcE) { //右边空
+        return 1;
+    }else if(targetS <= srcS && targetE >= srcE) { //两头包
+        return 4;
+    }else if(srcS < targetS && targetE < srcE) {//两头空
+        return 2;
+    }else if(srcS < targetS && targetS <= srcE) {//左边空
+        return 3;
+    }else if(srcE < targetS) { //在右边，无交集
+        return -1;
+    }
+    return -3;
 }
 
 void SURangePrint(SURange *range) {
@@ -251,5 +285,13 @@ SURangePointer mergeNode(SURangePointer node1, SURangePointer node) {
         free(node2);
     }
     return head;
+}
+
+void SURangeFree(SURangePointer range) {
+    while (range) {
+        SURangePointer tmp = range;
+        range = range->next;
+        free(tmp);
+    }
 }
 

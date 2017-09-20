@@ -16,7 +16,7 @@ Pod::Spec.new do |s|
   #
 
   s.name         = "SUAdvancePlayer"
-  s.version      = "0.0.3"
+  s.version      = "0.1.0"
   s.summary      = "一个可以多点下载的点播播放器，支持多点下载缓存播放文件等"
 
   # This description is used to generate tags and improve search results.
@@ -65,7 +65,7 @@ Pod::Spec.new do |s|
   #
 
   s.platform     = :ios
-  # s.platform     = :ios, "7.0"
+  s.platform     = :ios, "9.0"
 
   #  When using multiple platforms
   # s.ios.deployment_target = "5.0"
