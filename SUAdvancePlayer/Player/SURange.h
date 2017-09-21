@@ -50,6 +50,7 @@ int isTargetCrossInSrc(SURangePointer src, SURangePointer target);
 
 SURangePointer SUInsertNodeIntoRange(SURangePointer src, SURangePointer node1);
 SURangePointer SUGetGapRanges(SURangePointer links, SURangePointer node);
+SURangePointer SUGetXRanges(SURangePointer src, SURangePointer target);
 int  SURangePositionInSource(SURangePointer src, SURangePointer target);
 void SURangePrint(SURangePointer range);
 void SURangeFree(SURangePointer range);

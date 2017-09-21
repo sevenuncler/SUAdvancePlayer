@@ -9,6 +9,7 @@
 #import "SUURLAssetSourceLoader.h"
 #import "SUDownloadTask.h"
 #import <MobileCoreServices/MobileCoreServices.h>
+#import "SURange.h"
 
 @interface SUURLAssetSourceLoader()
 
@@ -40,6 +41,7 @@
     NSURL *URL = loadingRequest.request.URL;
     NSUInteger requestOffset = loadingRequest.dataRequest.requestedOffset;
     __weak typeof(self) weakSelf = self;
+    [self dealWithLoadingRequests];
     if(!self.downloadTask) {
         self.downloadTask = [SUDownloadTask new];
         self.downloadTask.freshDataCachedHandler = ^() {
@@ -110,7 +112,12 @@
     if (startOffset < self.downloadTask.requestOffset) {
         return NO;
     }
-    
+    SURange requestRange = SUMakeRange(startOffset, dataRequest.requestedLength);
+    SURangePointer dataRange = SUGetXRanges(self.downloadTask.downloadRange, &requestRange);
+//    free(&requestRange);
+    if(NULL == dataRange) {
+        return NO;
+    }
     
     // This is the total data we have from startOffset to whatever has been downloaded so far
     NSUInteger unreadBytes = self.downloadTask.resourceCachedLength - ((NSInteger)startOffset - self.downloadTask.requestOffset);
@@ -118,13 +125,14 @@
     // Respond with whatever is available if we can't satisfy the request fully yet
     NSUInteger numberOfBytesToRespondWith = MIN((NSUInteger)dataRequest.requestedLength, unreadBytes);
     
-    NSData *data = [self.downloadTask readDataInRange:NSMakeRange((NSUInteger)startOffset - self.downloadTask.requestOffset, (NSUInteger)numberOfBytesToRespondWith)];
+//    NSData *data = [self.downloadTask readDataInRange:NSMakeRange((NSUInteger)startOffset - self.downloadTask.requestOffset, (NSUInteger)numberOfBytesToRespondWith)];
+    NSData *data = [self.downloadTask readDataInRange:NSMakeRange(dataRange->location, dataRange->length)];
     [dataRequest respondWithData:data];
     
     
     
     long long endOffset = startOffset + dataRequest.requestedLength;
-    BOOL didRespondFully = (self.downloadTask.requestOffset + self.downloadTask.resourceCachedLength) >= endOffset;
+    BOOL didRespondFully = (dataRange->location + dataRange->length) >= endOffset;
     if(didRespondFully) {
         NSLog(@"%12lld-%12lld-%12ld >>>>> 完成1", startOffset, dataRequest.requestedOffset, dataRequest.requestedLength);
         NSLog(@"%12lld-%12lld-%12ld >>>>> 完成2", dataRequest.currentOffset, dataRequest.requestedOffset, dataRequest.requestedLength);

@@ -131,7 +131,7 @@ SURangePointer SUGetGapRanges(SURangePointer links, SURangePointer node) {
     SURangePointer resultHead      = NULL;
     SURangePointer currentPointer  = NULL;
     tmp = NULL;
-
+    
     switch (SURangePositionInSource(node, head)) {
         case 1:
             break;
@@ -164,7 +164,7 @@ SURangePointer SUGetGapRanges(SURangePointer links, SURangePointer node) {
         head = head->next;
     }
     
-
+    
     switch (SURangePositionInSource(node, tail)) {
         case 1:
         case 2:
@@ -228,7 +228,7 @@ int SURangePositionInSource(SURangePointer src, SURangePointer target) {
         return 4;
     }else if(srcS < targetS && targetE < srcE) {//两头空
         return 2;
-    }else if(srcS < targetS && targetS <= srcE) {//左边空
+    }else if(srcS < targetS && targetS <= srcE && srcE <= targetE) {//左边空
         return 3;
     }else if(srcE < targetS) { //在右边，无交集
         return -1;
@@ -292,6 +292,23 @@ void SURangeFree(SURangePointer range) {
         SURangePointer tmp = range;
         range = range->next;
         free(tmp);
+        tmp = NULL;
     }
 }
 
+SURangePointer SUGetXRanges(SURangePointer src, SURangePointer target) {
+    SURangePointer tmp = NULL;
+    SURangePointer tmp1 = NULL;
+    
+    for(tmp = src; tmp; tmp = tmp->next) {
+        if(tmp->location <= target->location && (target->location <= tmp->location+tmp->length - 1 )) {
+        tmp1 = malloc(sizeof(SURange));
+        tmp1->next = NULL;
+        tmp1->location = target->location;
+            unsigned long long offset = MIN(target->location + target->length - 1, tmp->location+tmp->length - 1 );
+        tmp1->length   = offset - tmp1->location + 1;
+        return tmp1;
+        }
+    }
+    return NULL;
+}
