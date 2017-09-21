@@ -43,29 +43,28 @@
     range1->next = range2;
     SURangePointer resx = SUGetGapRanges(range1, range3);
     SURangePrint(resx);
-    self.player = [[SUAdvancePlayer alloc] initPlayerWithURL:[NSURL URLWithString:@"http://vodg3ns8cfm.vod.126.net/vodg3ns8cfm/0S0r2IXc_75031_shd.mp4"]];
+    self.player = [[SUAdvancePlayer alloc] initPlayerWithURL:[NSURL URLWithString:@"http://vodg3ns8cfm.vod.126.net/vodg3ns8cfm/dba5df4ac7be4183ac3f5b6d79cf3a52_1504750063641_1504750359963_21220054-00002.mp4"]];
     self.player.playerLayer.frame = self.view.bounds;
     [self.view.layer addSublayer:self.player.playerLayer];
     [self.player play];
 //
-    return;
     __weak typeof(self) weakSelf = self;
     
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-        [weakSelf.player seekToOffset:60 * 10];
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        [weakSelf.player seekToOffset:60 * 1];
     });
 
  
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(10 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-        [weakSelf.player seekToOffset:60 * 20];
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        [weakSelf.player seekToOffset:60 * 3];
     });
     
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(15 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-        [weakSelf.player seekToOffset:60 * 30];
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(7 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        [weakSelf.player seekToOffset:60 * 2];
     });
 
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(20 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-        [weakSelf.player seekToOffset:60 * 56];
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(11 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        [weakSelf.player seekToOffset:60 * 1.5];
     });
     
     
