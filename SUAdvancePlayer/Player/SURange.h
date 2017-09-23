@@ -27,8 +27,8 @@ NS_INLINE SURange SUMakeRange(NSUInteger loc, NSUInteger len) {
 
 NS_INLINE NSRange SURange2NSRange(SURange node) {
     NSRange r;
-    r.location = node.location;
-    r.length   = node.length;
+    r.location = (NSUInteger)node.location;
+    r.length   = (NSUInteger)node.length;
     return r;
 }
 

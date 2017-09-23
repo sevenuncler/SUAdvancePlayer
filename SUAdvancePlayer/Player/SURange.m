@@ -46,11 +46,14 @@ SURangePointer  SUInsertNodeIntoRange(SURange  *src, SURange *node1){
     SURangePointer range = NULL;
     if(NULL != head) {
         if(head->location>0 && (node->location + node->length-1) < head->location - 1) {
+//            SURangePointer tmp = malloc(sizeof(SURange));
+//            memcpy(tmp, head, sizeof(SURange));
+//            tmp->next = NULL;
             node->next = head;
             range = node;
         }else {
-            NSUInteger  location = MIN(node->location, head->location);
-            NSUInteger  offset   = MAX(node->location + node->length - 1, head->location + head->length - 1);
+            unsigned long long  location = MIN(node->location, head->location);
+            unsigned long long  offset   = MAX(node->location + node->length - 1, head->location + head->length - 1);
             range = (SURangePointer)malloc(sizeof(SURange));
             range->location = location;
             range->length   = offset - location + 1;
@@ -59,7 +62,13 @@ SURangePointer  SUInsertNodeIntoRange(SURange  *src, SURange *node1){
             //
             range = mergeNode(range, tailPre);
             range->next = tail;
-            head = range;
+            
+            //释放中间节点
+            while (head != NULL && head != tail) {
+                node = head;
+                free(head);
+                head = node->next;
+            }
         }
     }else {
         range = node;
@@ -72,6 +81,8 @@ SURangePointer  SUInsertNodeIntoRange(SURange  *src, SURange *node1){
     }else {
         headPre->next = range;
     }
+    
+    
     return targetHead;
 }
 
@@ -89,7 +100,10 @@ SURangePointer SUGetGapRanges(SURangePointer links, SURangePointer node) {
     while(NULL != head) {
         switch (SURangePositionInSource(node, head)) {
             case 5:
-                return node;
+                tmp = malloc(sizeof(SURange));
+                memcpy(tmp, node, sizeof(SURange));
+                tmp->next = NULL;
+                return tmp;
             case 4:
                 return  NULL;
             case 3:
@@ -126,7 +140,10 @@ SURangePointer SUGetGapRanges(SURangePointer links, SURangePointer node) {
     tail = preTail;
     
     if(NULL == head) {
-        return node;
+        tmp = malloc(sizeof(SURange));
+        memcpy(tmp, node, sizeof(SURange));
+        tmp->next = NULL;
+        return tmp;
     }
     SURangePointer resultHead      = NULL;
     SURangePointer currentPointer  = NULL;
@@ -141,7 +158,7 @@ SURangePointer SUGetGapRanges(SURangePointer links, SURangePointer node) {
             tmp->location = nodeStart;
             tmp->length   = head->location - nodeStart;
             tmp->next     = NULL;
-            resultHead = tmp;
+            resultHead    = tmp;
             break;
         case 4:
             break;
@@ -155,11 +172,11 @@ SURangePointer SUGetGapRanges(SURangePointer links, SURangePointer node) {
         currentPointer->length   = head->next->location - currentPointer->location; //head->next->location - 1 - currentPointer->location + 1
         currentPointer->next     = NULL;
         if(tmp == NULL) {
-            tmp = currentPointer;
-            resultHead = tmp;
+            tmp         = currentPointer;
+            resultHead  = tmp;
         }else {
-            tmp->next = currentPointer;
-            tmp = currentPointer;
+            tmp->next   = currentPointer;
+            tmp         = currentPointer;
         }
         head = head->next;
     }
@@ -214,7 +231,7 @@ int SURangePositionInSource(SURangePointer src, SURangePointer target) {
     if(NULL == src || target == NULL) { //无法判断
         return -2;
     }
-    unsigned long long srcS = src->location;
+    unsigned long long srcS   = src->location;
     unsigned long long srcE   = src->location + src->length - 1;
     
     unsigned long long targetS = target->location;
@@ -272,17 +289,22 @@ SURangePointer mergeNode(SURangePointer node1, SURangePointer node) {
     swapSmallLocation2Left(node1, node2);
     
     if(node1->location >0 && (node2->location + node2->length-1) < node1->location - 1) {
-        node2->next = node1;
+        range = malloc(sizeof(SURange));
+        memcpy(range, node1, sizeof(SURange));
+        range->next = NULL;
+        node2->next = range;
         head = node2;
+        free(node1);
     }else {
-        NSUInteger  location = MIN(node2->location, node1->location);
-        NSUInteger  offset   = MAX(node2->location + node2->length - 1, node1->location + node1->length - 1);
+        unsigned long long  location = MIN(node2->location, node1->location);
+        unsigned long long  offset   = MAX(node2->location + node2->length - 1, node1->location + node1->length - 1);
         range = (SURangePointer)malloc(sizeof(SURange));
         range->location = location;
         range->length   = offset - location + 1;
         range->next = NULL;
         head = range;
         free(node2);
+        free(node1);
     }
     return head;
 }

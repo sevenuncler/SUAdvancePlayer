@@ -26,7 +26,9 @@
 
 #pragma mark - 生命周期
 - (void)dealloc {
+//    SURangeFree(self.reqRange);
     SURangeFree(_downloadRange);
+    SURangeFree(self.currentRange);
 }
 
 #pragma mark - public
@@ -46,8 +48,7 @@
 
 - (void)seekToDownloadAtOffset:(unsigned long long)offset withURL:(NSURL *)url {
     
-    self.requestOffset  = offset;
-    self.currentOffset  = offset;
+    
     NSURL *effectiveURL = [self originSchemeURL:url];
     _resourceURL = url;
     self.resourceCachedLength = 0;
@@ -57,19 +58,27 @@
     request = [NSMutableURLRequest requestWithURL:effectiveURL];
     if (self.resourceLength > 0) {
         SURangePointer requestRange = malloc(sizeof(SURange));
-        requestRange->location = self.requestOffset;
-        requestRange->length   = self.resourceLength - 1 - self.requestOffset + 1;
+        requestRange->location = offset;
+        requestRange->length   = self.resourceLength - 1 - offset + 1;
         requestRange->next     = NULL;
         SURangePointer tmpRange = SUGetGapRanges(_downloadRange, requestRange);
         if(NULL == tmpRange) {
-                    free(requestRange);
+            free(requestRange);
+            SURangeFree(tmpRange);
             [self continueDownload];
+            return;
         }
         _failCount = 0;
-        self.reqRange = tmpRange;
+//        if(self.reqRange != NULL) {
+//            SURangeFree(self.reqRange);
+//        }
+//        self.reqRange = tmpRange;
+        self.requestOffset  = tmpRange->location;
+        self.currentOffset  = tmpRange->location;
         NSString *value = [NSString stringWithFormat:@"bytes=%lld-%lld",tmpRange->location, tmpRange->location + tmpRange->length - 1];
         [request addValue:value forHTTPHeaderField:@"Range"];
         free(requestRange);
+        SURangeFree(tmpRange);
     }
     _currentRange->location = self.requestOffset;
     _currentRange->length   = 0;
@@ -98,10 +107,13 @@
 }
 
 - (void)continueDownload {
-    if(1 == _failCount) {
+    if(0 == _failCount) {
+        _failCount ++;
         [self seekToDownloadAtOffset:0 withURL:self.resourceURL];
+    }else if(_failCount >= 1) {
+        NSLog(@"下载完成");
+        return;
     }
-    _failCount ++;
 }
 
 #pragma mark - NSURLSessionDataDelegate
@@ -165,8 +177,11 @@ didCompleteWithError:(nullable NSError *)error {
     NSHTTPURLResponse *httpURLResponse = (NSHTTPURLResponse *)task.response;
     NSDictionary *dict = [httpURLResponse allHeaderFields];
     NSString     *content = [dict valueForKey:@"Content-Range"];
-    NSLog(@"完成一次请求%@ 当前偏移%lld", task.response, self.currentOffset);
-    NSString *offsetString = [NSString stringWithFormat:@"%lld", _currentOffset];
+    NSString *offsetString = [NSString stringWithFormat:@"%lld", _currentOffset-1];
+    NSLog(@"完成一次请求%@", content);
+    NSLog(@"offset%@", offsetString);
+    NSLog(@">>>>>>>>>><<<<<<<<<<<");
+
     if([content rangeOfString:offsetString].length>0) {
         if (self.currentOffset >= self.resourceLength) {
             [self seekToDownloadAtOffset:0 withURL:self.resourceURL];
