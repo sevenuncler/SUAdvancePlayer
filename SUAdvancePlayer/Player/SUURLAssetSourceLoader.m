@@ -32,8 +32,6 @@
 
 - (void)addLoadingRequest:(AVAssetResourceLoadingRequest *)loadingRequest {
     [self.pendingRequests addObject:loadingRequest];
-    NSLog(@"%12lld-%12lld-%12ld >>>>>", loadingRequest.dataRequest.currentOffset, loadingRequest.dataRequest.requestedOffset, loadingRequest.dataRequest.requestedLength);
-    
     [self doDownloadSource:loadingRequest];
 }
 

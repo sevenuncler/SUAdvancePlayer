@@ -41,6 +41,7 @@
 }
 
 - (void)play {
+    [[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryPlayback error:nil];
     [self.player play];
 }
 

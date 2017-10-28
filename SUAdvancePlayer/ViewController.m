@@ -9,6 +9,7 @@
 #import "ViewController.h"
 #import "SUAdvancePlayer.h"
 #import "SURange.h"
+#import <MediaPlayer/MediaPlayer.h>
 
 @interface ViewController ()
 
@@ -26,26 +27,25 @@
 
     self.player = [[SUAdvancePlayer alloc] initPlayerWithURL:[NSURL URLWithString:@"http://vodg3ns8cfm.vod.126.net/vodg3ns8cfm/0S0r2IXc_75031_shd.mp4"]];
     self.player.playerLayer.frame = self.view.bounds;
-    [self.view.layer addSublayer:self.player.playerLayer];
+//    [self.view.layer addSublayer:self.player.playerLayer];
     [self.player play];
     __weak typeof(self) weakSelf = self;
-    
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-        [weakSelf.player seekToOffset:60 * 5];
-    });
-
- 
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(7 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-        [weakSelf.player seekToOffset:60 * 3];
-    });
-    
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(18 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-        [weakSelf.player seekToOffset:60 * 2];
-    });
-
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(50 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-//        [weakSelf.player seekToOffset:60 * 7];
-    });
+//    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+//        [weakSelf.player seekToOffset:60 * 5];
+//    });
+//
+//
+//    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(7 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+//        [weakSelf.player seekToOffset:60 * 3];
+//    });
+//
+//    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(18 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+//        [weakSelf.player seekToOffset:60 * 2];
+//    });
+//
+//    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(20 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+//        [weakSelf.player seekToOffset:60 * 1];
+//    });
     
     
 }

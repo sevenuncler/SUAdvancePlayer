@@ -26,7 +26,6 @@
 
 #pragma mark - 生命周期
 - (void)dealloc {
-//    SURangeFree(self.reqRange);
     SURangeFree(_downloadRange);
     SURangeFree(self.currentRange);
 }
