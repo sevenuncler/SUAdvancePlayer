@@ -49,6 +49,11 @@
     [self.player pause];
 }
 
+- (void)playNextWithURL:(NSURL *)URL {
+    AVPlayerItem *newItem = [AVPlayerItem playerItemWithURL:URL];
+    [self.player replaceCurrentItemWithPlayerItem:newItem];
+}
+
 #pragma mark - Private
 
 - (NSURL *)customSchemeURL:(NSURL *)url {
