@@ -7,7 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
-
+#import "SURange.h"
 NS_ASSUME_NONNULL_BEGIN
 
 typedef void (^FreshDataCachedHandler)();
@@ -17,8 +17,10 @@ typedef void (^FreshDataCachedHandler)();
 @property (nonatomic, null_resettable) NSString     *temporyFilePath;
 @property (nonatomic, readonly)        NSURL        *resourceURL;
 @property (nonatomic, assign)   unsigned long long  requestOffset;
+@property (nonatomic, assign)   unsigned long long  currentOffset;
 @property (nonatomic, assign)   unsigned long long  resourceLength;
 @property (nonatomic, assign)   unsigned long long  resourceCachedLength;
+@property (nonatomic, assign)   SURangePointer      downloadRange;
 @property (nonatomic, copy)            FreshDataCachedHandler freshDataCachedHandler;
 
 - (void)startDownloadWithURL:(NSURL *)url;

@@ -9,6 +9,7 @@
 #import "SUURLAssetSourceLoader.h"
 #import "SUDownloadTask.h"
 #import <MobileCoreServices/MobileCoreServices.h>
+#import "SURange.h"
 
 @interface SUURLAssetSourceLoader()
 
@@ -31,8 +32,6 @@
 
 - (void)addLoadingRequest:(AVAssetResourceLoadingRequest *)loadingRequest {
     [self.pendingRequests addObject:loadingRequest];
-    NSLog(@"%12lld-%12lld-%12ld >>>>>", loadingRequest.dataRequest.currentOffset, loadingRequest.dataRequest.requestedOffset, loadingRequest.dataRequest.requestedLength);
-    
     [self doDownloadSource:loadingRequest];
 }
 
@@ -40,6 +39,7 @@
     NSURL *URL = loadingRequest.request.URL;
     NSUInteger requestOffset = loadingRequest.dataRequest.requestedOffset;
     __weak typeof(self) weakSelf = self;
+    [self dealWithLoadingRequests];
     if(!self.downloadTask) {
         self.downloadTask = [SUDownloadTask new];
         self.downloadTask.freshDataCachedHandler = ^() {
@@ -86,10 +86,13 @@
 - (void)fillInContentInformation:(AVAssetResourceLoadingContentInformationRequest *)contentInformationRequest
 {
     NSString *mimeType = @"video/mp4";
-    CFStringRef contentType = UTTypeCreatePreferredIdentifierForTag(kUTTagClassMIMEType, (__bridge CFStringRef)(mimeType), NULL);
+    CFStringRef stringRef = (__bridge CFStringRef)(mimeType);
+    CFStringRef contentType = UTTypeCreatePreferredIdentifierForTag(kUTTagClassMIMEType, stringRef, NULL);
     contentInformationRequest.byteRangeAccessSupported = YES;
     contentInformationRequest.contentType = CFBridgingRelease(contentType);
     contentInformationRequest.contentLength = self.downloadTask.resourceLength;
+    CFRelease(stringRef);
+//    CFRelease(contentType);
 }
 
 - (BOOL)fillResponseDataForLoadingRequest:(AVAssetResourceLoadingRequest *)loadingRequest {
@@ -110,25 +113,39 @@
     if (startOffset < self.downloadTask.requestOffset) {
         return NO;
     }
-    
+    SURangePointer requestRange = malloc(sizeof(SURange));
+    requestRange->location = startOffset;
+    requestRange->length   = dataRequest.requestedLength;
+    requestRange->next     = NULL;
+//    SUMakeRange(startOffset, dataRequest.requestedLength);
+    SURangePointer dataRange = SUGetXRanges(self.downloadTask.downloadRange, requestRange);
+    if(NULL == dataRange) {
+        SURangeFree(dataRange);
+        SURangeFree(requestRange);
+        return NO;
+    }
     
     // This is the total data we have from startOffset to whatever has been downloaded so far
-    NSUInteger unreadBytes = self.downloadTask.resourceCachedLength - ((NSInteger)startOffset - self.downloadTask.requestOffset);
+//    NSUInteger unreadBytes = self.downloadTask.resourceCachedLength - ((NSInteger)startOffset - self.downloadTask.requestOffset);
     
     // Respond with whatever is available if we can't satisfy the request fully yet
-    NSUInteger numberOfBytesToRespondWith = MIN((NSUInteger)dataRequest.requestedLength, unreadBytes);
+//    NSUInteger numberOfBytesToRespondWith = MIN((NSUInteger)dataRequest.requestedLength, unreadBytes);
     
-    NSData *data = [self.downloadTask readDataInRange:NSMakeRange((NSUInteger)startOffset - self.downloadTask.requestOffset, (NSUInteger)numberOfBytesToRespondWith)];
+//    NSData *data = [self.downloadTask readDataInRange:NSMakeRange((NSUInteger)startOffset - self.downloadTask.requestOffset, (NSUInteger)numberOfBytesToRespondWith)];
+    NSData *data = [self.downloadTask readDataInRange:NSMakeRange(dataRange->location, dataRange->length)];
     [dataRequest respondWithData:data];
     
     
     
     long long endOffset = startOffset + dataRequest.requestedLength;
-    BOOL didRespondFully = (self.downloadTask.requestOffset + self.downloadTask.resourceCachedLength) >= endOffset;
+    BOOL didRespondFully = (dataRange->location + dataRange->length) >= endOffset;
     if(didRespondFully) {
         NSLog(@"%12lld-%12lld-%12ld >>>>> 完成1", startOffset, dataRequest.requestedOffset, dataRequest.requestedLength);
         NSLog(@"%12lld-%12lld-%12ld >>>>> 完成2", dataRequest.currentOffset, dataRequest.requestedOffset, dataRequest.requestedLength);
     }
+    SURangeFree(dataRange);
+    SURangeFree(requestRange);
+
     return didRespondFully;
 }
 

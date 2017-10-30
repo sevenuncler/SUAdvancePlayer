@@ -19,5 +19,6 @@
 - (void)seekToOffset:(NSUInteger )offset;
 - (void)play;
 - (void)pause;
+- (void)playNextWithURL:(NSURL *)URL;
 
 @end

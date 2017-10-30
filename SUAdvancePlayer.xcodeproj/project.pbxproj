@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		4A995BE41F71FFFF008F9B6A /* SURange.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A995BE31F71FFFF008F9B6A /* SURange.m */; };
 		4AE8F2151F6BCB940094BA4F /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 4AE8F2141F6BCB940094BA4F /* main.m */; };
 		4AE8F2181F6BCB940094BA4F /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 4AE8F2171F6BCB940094BA4F /* AppDelegate.m */; };
 		4AE8F21B1F6BCB940094BA4F /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4AE8F21A1F6BCB940094BA4F /* ViewController.m */; };
@@ -30,6 +31,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		4A995BE31F71FFFF008F9B6A /* SURange.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SURange.m; sourceTree = "<group>"; };
 		4AACD3281F6FCC6D00BFA473 /* SURange.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SURange.h; sourceTree = "<group>"; };
 		4AE8F2101F6BCB940094BA4F /* SUAdvancePlayer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SUAdvancePlayer.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		4AE8F2141F6BCB940094BA4F /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
@@ -126,12 +128,13 @@
 			isa = PBXGroup;
 			children = (
 				4AACD3281F6FCC6D00BFA473 /* SURange.h */,
+				4A995BE31F71FFFF008F9B6A /* SURange.m */,
 				87416C411F6EBB8F00535052 /* SUAdvancePlayer.h */,
 				87416C421F6EBB8F00535052 /* SUAdvancePlayer.m */,
-				87416C431F6EBB8F00535052 /* SUDownloadTask.h */,
-				87416C441F6EBB8F00535052 /* SUDownloadTask.m */,
 				87416C451F6EBB8F00535052 /* SUURLAssetSourceLoader.h */,
 				87416C461F6EBB8F00535052 /* SUURLAssetSourceLoader.m */,
+				87416C431F6EBB8F00535052 /* SUDownloadTask.h */,
+				87416C441F6EBB8F00535052 /* SUDownloadTask.m */,
 			);
 			path = Player;
 			sourceTree = "<group>";
@@ -185,7 +188,7 @@
 				TargetAttributes = {
 					4AE8F20F1F6BCB940094BA4F = {
 						CreatedOnToolsVersion = 8.2.1;
-						DevelopmentTeam = 7WAPB4EAX2;
+						DevelopmentTeam = ZA43ZW39F3;
 						ProvisioningStyle = Automatic;
 					};
 					4AE8F2281F6BCB940094BA4F = {
@@ -246,6 +249,7 @@
 				4AE8F2181F6BCB940094BA4F /* AppDelegate.m in Sources */,
 				4AE8F2151F6BCB940094BA4F /* main.m in Sources */,
 				87416C471F6EBB8F00535052 /* SUAdvancePlayer.m in Sources */,
+				4A995BE41F71FFFF008F9B6A /* SURange.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -381,10 +385,11 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				DEVELOPMENT_TEAM = 7WAPB4EAX2;
+				DEVELOPMENT_TEAM = ZA43ZW39F3;
 				INFOPLIST_FILE = SUAdvancePlayer/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.netease.vcloud.fh3096.SUAdvancePlayer;
+				OTHER_LDFLAGS = "-Objc";
+				PRODUCT_BUNDLE_IDENTIFIER = com.netease.vcloud.fh4096;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -393,10 +398,11 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				DEVELOPMENT_TEAM = 7WAPB4EAX2;
+				DEVELOPMENT_TEAM = ZA43ZW39F3;
 				INFOPLIST_FILE = SUAdvancePlayer/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.netease.vcloud.fh3096.SUAdvancePlayer;
+				OTHER_LDFLAGS = "-Objc";
+				PRODUCT_BUNDLE_IDENTIFIER = com.netease.vcloud.fh4096;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;

@@ -41,11 +41,17 @@
 }
 
 - (void)play {
+    [[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryPlayback error:nil];
     [self.player play];
 }
 
 - (void)pause {
     [self.player pause];
+}
+
+- (void)playNextWithURL:(NSURL *)URL {
+    AVPlayerItem *newItem = [AVPlayerItem playerItemWithURL:URL];
+    [self.player replaceCurrentItemWithPlayerItem:newItem];
 }
 
 #pragma mark - Private

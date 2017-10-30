@@ -7,37 +7,81 @@
 //
 
 #import "SUDownloadTask.h"
+#import "SURange.h"
 
 @interface SUDownloadTask()<NSURLSessionDataDelegate>
-
+{
+    SURange *_downloadRange;
+    NSUInteger _failCount;
+}
 @property (nonatomic, strong) NSURLSession          *session;
 @property (nonatomic, strong) NSURLSessionDataTask  *dataTask;
+@property (nonatomic, assign) SURangePointer        currentRange;
+@property (nonatomic, assign) SURangePointer        reqRange;
+@property (nonatomic, strong) NSMutableDictionary   *rangeDict;
 
 @end
 
 @implementation SUDownloadTask
+
+#pragma mark - 生命周期
+- (void)dealloc {
+    SURangeFree(_downloadRange);
+    SURangeFree(self.currentRange);
+}
 
 #pragma mark - public
 
 - (void)startDownloadWithURL:(NSURL *)url {
     self.resourceLength = 0;
     self.requestOffset  = 0;
+    self.currentOffset  = 0;
     self.resourceCachedLength = 0;
+    self.rangeDict = [NSMutableDictionary dictionary];
+    _failCount = 0;
+    self.currentRange = malloc(sizeof(SURange));
+    self.currentRange->next = NULL;
+    [self recreateTempFile:self.temporyFilePath];
     [self seekToDownloadAtOffset:0 withURL:url];
 }
 
 - (void)seekToDownloadAtOffset:(unsigned long long)offset withURL:(NSURL *)url {
     
-    self.requestOffset  = offset;
+    
     NSURL *effectiveURL = [self originSchemeURL:url];
+    _resourceURL = url;
     self.resourceCachedLength = 0;
     [self.dataTask cancel]; //很重要，否则数据会乱
     
     NSMutableURLRequest *request;
     request = [NSMutableURLRequest requestWithURL:effectiveURL];
-    if (self.requestOffset > 0 && self.resourceLength > 0) {
-        [request addValue:[NSString stringWithFormat:@"bytes=%ld-%ld",(unsigned long)offset, (unsigned long)self.resourceLength - 1] forHTTPHeaderField:@"Range"];
+    if (self.resourceLength > 0) {
+        SURangePointer requestRange = malloc(sizeof(SURange));
+        requestRange->location = offset;
+        requestRange->length   = self.resourceLength - 1 - offset + 1;
+        requestRange->next     = NULL;
+        SURangePointer tmpRange = SUGetGapRanges(_downloadRange, requestRange);
+        if(NULL == tmpRange) {
+            free(requestRange);
+            SURangeFree(tmpRange);
+            [self continueDownload];
+            return;
+        }
+        _failCount = 0;
+//        if(self.reqRange != NULL) {
+//            SURangeFree(self.reqRange);
+//        }
+//        self.reqRange = tmpRange;
+        self.requestOffset  = tmpRange->location;
+        self.currentOffset  = tmpRange->location;
+        NSString *value = [NSString stringWithFormat:@"bytes=%lld-%lld",tmpRange->location, tmpRange->location + tmpRange->length - 1];
+        [request addValue:value forHTTPHeaderField:@"Range"];
+        free(requestRange);
+        SURangeFree(tmpRange);
     }
+    _currentRange->location = self.requestOffset;
+    _currentRange->length   = 0;
+    
     self.dataTask = [self.session dataTaskWithRequest:request];
     [self.dataTask resume];
 }
@@ -57,6 +101,19 @@
     return components.URL;
 }
 
+- (SURangePointer)useRange:(SURangePointer)request {
+    return NULL;
+}
+
+- (void)continueDownload {
+    if(0 == _failCount) {
+        _failCount ++;
+        [self seekToDownloadAtOffset:0 withURL:self.resourceURL];
+    }else if(_failCount >= 1) {
+        NSLog(@"下载完成");
+        return;
+    }
+}
 
 #pragma mark - NSURLSessionDataDelegate
 
@@ -82,18 +139,54 @@ didReceiveResponse:(NSURLResponse *)response
     //资源类型
     
     //重新创建临时文件
-    [self recreateTempFile:self.temporyFilePath];
+    
+
 }
 
 - (void)URLSession:(NSURLSession *)session dataTask:(NSURLSessionDataTask *)dataTask
     didReceiveData:(NSData *)data {
+    
     NSFileHandle *fileHandle = [NSFileHandle fileHandleForWritingAtPath:self.temporyFilePath];
-    [fileHandle seekToEndOfFile];
+    [fileHandle seekToFileOffset:self.currentOffset];
     [fileHandle writeData:data];
     self.resourceCachedLength += data.length;
+    //
+    _currentRange->length += data.length;
+    SURange *range;
+    range = malloc(sizeof(SURange));
+    range->location = self.currentOffset;
+    range->length   = data.length;
+    range->next     = NULL;
+    _downloadRange = SUInsertNodeIntoRange(_downloadRange, range);
+    free(range);
+    SURangePrint(_downloadRange);
+    
+    self.currentOffset += data.length;
     //通知数据更新
     if(self.freshDataCachedHandler) {
         self.freshDataCachedHandler();
+    }
+}
+
+- (void)URLSession:(NSURLSession *)session task:(NSURLSessionTask *)task
+didCompleteWithError:(nullable NSError *)error {
+    NSLog(@">>>>>>>>>><<<<<<<<<<<");
+//    SURangePrint(self.reqRange);
+//    SURangePrint(_currentRange);
+    NSHTTPURLResponse *httpURLResponse = (NSHTTPURLResponse *)task.response;
+    NSDictionary *dict = [httpURLResponse allHeaderFields];
+    NSString     *content = [dict valueForKey:@"Content-Range"];
+    NSString *offsetString = [NSString stringWithFormat:@"%lld", _currentOffset-1];
+    NSLog(@"完成一次请求%@", content);
+    NSLog(@"offset%@", offsetString);
+    NSLog(@">>>>>>>>>><<<<<<<<<<<");
+
+    if([content rangeOfString:offsetString].length>0) {
+        if (self.currentOffset >= self.resourceLength) {
+            [self seekToDownloadAtOffset:0 withURL:self.resourceURL];
+        }else {
+            [self seekToDownloadAtOffset:self.currentOffset withURL:self.resourceURL];
+        }
     }
 }
 
@@ -130,5 +223,6 @@ didReceiveResponse:(NSURLResponse *)response
     }
     return _dataTask;
 }
+
 
 @end
