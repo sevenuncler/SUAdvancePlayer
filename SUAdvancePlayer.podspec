@@ -17,7 +17,7 @@ Pod::Spec.new do |s|
 
   s.name         = "SUAdvancePlayer"
 
-  s.version      = "0.1.4"
+  s.version      = "0.1.6"
   s.summary      = "一个可以多点下载的点播播放器，支持多点下载缓存播放文件等"
 
   # This description is used to generate tags and improve search results.
@@ -92,8 +92,19 @@ Pod::Spec.new do |s|
   #  Not including the public_header_files will make all headers public.
   #
 
-  s.source_files  = "SUAdvancePlayer", "SUAdvancePlayer/player/*.{h,m}"
-  s.exclude_files = "Classes/Exclude"
+  s.subspec 'Core' do |cs|
+  	cs.source_files  = "SUAdvancePlayer/player/*.{h,m}"
+  	cs.subspec 'Utils' do |es|
+  		es.source_files  = "SUAdvancePlayer/player/utils/*.{h,m}"
+ 	end
+	
+  	cs.subspec 'Classes' do |ds|
+  		ds.source_files  = "SUAdvancePlayer/player/classes/**/*.{h,m}"
+		
+ 	end
+  	
+  end
+
 
   # s.public_header_files = "Classes/**/*.h"
 
